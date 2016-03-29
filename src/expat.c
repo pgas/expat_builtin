@@ -22,7 +22,6 @@
 
 static char * encoding ();
 
-
 int
 expat_builtin (list)
      WORD_LIST *list;
@@ -54,9 +53,26 @@ expat_builtin (list)
 	  return (EX_USAGE);
 
     }
+
+  /* we are evaling code like mapfile, eval etc so we save restore the
+     temporary environment like what is done for these in
+     execute_builtin.  
+     
+     I'm not 100% this is what I should do by hey.
+     
+     I'm also wondering if the freeing the parser should also be
+     unwind protected....it should probably be
+  */
+
+  begin_unwind_frame ("hello_builtin_env");
+  if (temporary_env)
+    {
+      push_scope (VC_BLTNENV, temporary_env);
+      temporary_env = (HASH_TABLE *)NULL;	  
+      add_unwind_protect (pop_scope, ( CMD_COMMAND_BUILTIN) ? 0 : "1");
+    }
+  
   charset = encoding();
-  //  printf("expat parsing callback: %s\n", start_callback);
-  //  fflush (stdout);
   XML_Parser p = getParser(charset, start_callback, NULL, NULL);
   while (list != NULL)
     {
@@ -65,6 +81,9 @@ expat_builtin (list)
       resetParser(p, charset);
     }
   freeParser(p);  
+
+  if (temporary_env)
+    run_unwind_frame ("hello_builtin_env");
   return (EXECUTION_SUCCESS);
 }
 

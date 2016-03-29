@@ -6,6 +6,13 @@
  
 #include "parse.h"
 
+
+#include "builtins.h"
+#include "shell.h"
+#include "bashgetopt.h"
+#include "common.h"
+
+
 /* let's explore gettext later */
 #define _(String) String
 
@@ -23,7 +30,24 @@ void XMLCALL startElementHandler(userData, name, atts)
      const XML_Char *name;
      const XML_Char **atts;
 {
-  printf("start element %s calling %s\n", name, ((callbacks *)userData)->start);
+  
+  /* don't save the code in history*/
+  int flags =  SEVAL_NOHIST;
+  int i;
+  SHELL_VAR *attributes;
+  //  printf("start element %s calling %s\n", name, ((callbacks *)userData)->start);
+  bind_variable("XML_NAME", savestring(name), 0);
+  unbind_variable("XML_ATTRIBUTES");
+  attributes = make_new_assoc_variable("XML_ATTRIBUTES");  
+  for (i=0;atts[i] != NULL;i+=2) 
+    {
+      bind_assoc_variable (attributes, 
+			   "XML_ATTRIBUTES",
+			   savestring(atts[i]),
+			   savestring(atts[i+1]),
+			   0);
+    }
+  evalstring (savestring(((callbacks *)userData)->start), NULL, flags);
 }
 
 void setHandlers(p, c)

@@ -1,5 +1,17 @@
 xml parser builtin based on expat.
 (mainly to explore bash builtins, but can be useful)
 
+To load it use:
+enable -f expat.so expat
+
+to use it;
+xml [-s start_callback] [file ...]
+
+start_callback will be evaluated at each start of a new element,
+XML_NAME will contain the name of the element and XML_ATTRIBUTES is an
+associative array containing the attributes
+
+
+eg: expat -s 'delcare -p XML_NAME XML_ATTRIBUTES' foo.xml
 
 work in progress.
