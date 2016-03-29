@@ -1,6 +1,5 @@
 *~
 Makefile
-Makefile.in
 autom4te.cache
 libtool
 .deps
