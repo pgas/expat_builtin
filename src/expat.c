@@ -17,6 +17,9 @@
 
 #include "parse.h"
 
+/* let's explore gettext later */
+#define _(String) String
+
 static char * encoding ();
 
 
@@ -42,8 +45,7 @@ expat_builtin (list)
 	default:
 	  builtin_usage ();
 	  return (EX_USAGE);
-	}
-      
+	}      
     }
   list = loptend;
   if (list == NULL)
@@ -53,15 +55,16 @@ expat_builtin (list)
 
     }
   charset = encoding();
-  printf("expat parsing callback: %s\n", start_callback);
-  fflush (stdout);
-
+  //  printf("expat parsing callback: %s\n", start_callback);
+  //  fflush (stdout);
+  XML_Parser p = getParser(charset, start_callback, NULL, NULL);
   while (list != NULL)
     {
-      parse_file(list->word->word, charset);
+      parse_file(list->word->word, p);
       list = list->next;
+      resetParser(p, charset);
     }
-    
+  freeParser(p);  
   return (EXECUTION_SUCCESS);
 }
 
@@ -138,7 +141,7 @@ encoding () {
   if ((strncmp(cur, "UTF-8",5) != 0) &&
       (strncmp(cur, "ISO-8859-1",10) != 0))
     {
-      fprintf(stderr, "warning: unsupported encoding %s defaulting to ISO8859-1\n");
+      builtin_warning (_("warning: unsupported encoding %s defaulting to ISO8859-1\n"), cur);
       cur = "ISO-8859-1";
     }
   return cur;
