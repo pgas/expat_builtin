@@ -28,15 +28,27 @@ expat_builtin (list)
 {
   int c;
   char * start_callback = NULL;
+  char * end_callback = NULL;
+  char * data_callback = NULL;
+  char * comment_callback = NULL;
   char * charset;
   
   reset_internal_getopt ();
-  while ((c = internal_getopt (list, "s:")) != -1)
+  while ((c = internal_getopt (list, "s:e:d:c:")) != -1)
     {
       switch (c)
 	{
 	case 's':
 	  start_callback = list_optarg;
+	  break;
+	case 'e':
+	  end_callback = list_optarg;
+	  break;
+	case 'd':
+	  data_callback = list_optarg;
+	  break;
+	case 'c':
+	  comment_callback = list_optarg;
 	  break;
 	case GETOPT_HELP:
 	  builtin_help (); 
@@ -73,7 +85,7 @@ expat_builtin (list)
     }
   
   charset = encoding();
-  XML_Parser p = getParser(charset, start_callback, NULL, NULL);
+  XML_Parser p = getParser(charset, start_callback, end_callback, data_callback, comment_callback);
   while (list != NULL)
     {
       parse_file(list->word->word, p);
@@ -108,9 +120,9 @@ expat_builtin_unload (s)
    which is printed by `help xxx'.  It must end with a NULL.  By convention,
    the first line is a short description. */
 char *expat_doc[] = {
-	"Sample builtin.",
+	"Parse xml files",
 	"",
-	"this is the long doc for the sample expat builtin",
+	"Evaluate the callback each time the parser reach a start element (start_callback)  and end element(end_callback) or parse text (data_callback)",
 	(char *)NULL
 };
 
@@ -122,7 +134,7 @@ struct builtin expat_struct = {
 	expat_builtin,		/* function implementing the builtin */
 	BUILTIN_ENABLED,	/* initial flags for builtin */
 	expat_doc,		/* array of long documentation strings. */
-	"expat",		/* usage synopsis; becomes short_doc */
+	"expat [-s start_callback] [-e end_callback] [-d data_callback] [-c comment_callback] [file ...]",
 	0			/* reserved for internal use */
 };
 

@@ -5,13 +5,21 @@ To load it use:
 enable -f expat.so expat
 
 to use it;
-xml [-s start_callback] [file ...]
+expat [-s start_callback] [-e end_callback] [-d data_callback] [-c comment_callback] [file ...]expat [-s start_callback] [file ...]
 
 start_callback will be evaluated at each start of a new element,
 XML_NAME will contain the name of the element and XML_ATTRIBUTES is an
 associative array containing the attributes
 
+end_callback will be evaluated at each end of a new element,
+XML_NAME will contain the name of the element
 
-eg: expat -s 'delcare -p XML_NAME XML_ATTRIBUTES' foo.xml
+data_callback: XML_DATA to free text However a single block of contiguous
+text free of markup may still result in a sequence of calls to this handler. In other
+words, if you're searching for a pattern in the text, it may be split across calls to
+this handler
 
+comment_callback will put the content of the comment in XML_COMMENT
+
+eg: expat -s 'delcare -p XML_NAME XML_ATTRIBUTES' -e "declare -p XML_NAME" -d "declare -p XML_DATA"  -c "declare -p XML_COMMENT" foo.xml
 work in progress.
