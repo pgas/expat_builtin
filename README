@@ -1,25 +1,48 @@
 xml parser builtin based on expat.
-(mainly to explore bash builtins, but can be useful)
+
+COMPILATION:
+./configure --with-bash=/path/to/bash/headers
+make
+
+I'm using libtool rather than bash own shobj-conf script to generate the dynamic library, not sure if it's a good idea or not.
+The resulting library is really in src/.libs, i've added a symlink for convenience.
+
+USAGE:
 
 To load it use:
+
 enable -f expat.so expat
 
-to use it;
-expat [-s start_callback] [-e end_callback] [-d data_callback] [-c comment_callback] [file ...]expat [-s start_callback] [file ...]
+To use it:
 
-start_callback will be evaluated at each start of a new element,
-XML_NAME will contain the name of the element and XML_ATTRIBUTES is an
-associative array containing the attributes
+expat [-s start_callback] [-e end_callback] [-d data_callback]\
+      [-c comment_callback] [file ...]
 
-end_callback will be evaluated at each end of a new element,
+The callbacks are evaluated and are called as follows:
+
+* start_callback:
+The code will be evaluated at each start of a new
+element. 2 variables will be set:
+ - XML_NAME will contain the name of the element
+ - XML_ATTRIBUTES is an associative array containing the
+attributes
+
+* end_callback:
+will be evaluated at each end of a new element,
 XML_NAME will contain the name of the element
 
-data_callback: XML_DATA to free text However a single block of contiguous
-text free of markup may still result in a sequence of calls to this handler. In other
-words, if you're searching for a pattern in the text, it may be split across calls to
-this handler
+* data_callback:
+called between the element, it will set XML_DATA to free text.
+However a single block of contiguous text free of markup may still
+result in a sequence of calls to this handler. In other words, if
+you're searching for a pattern in the text, it may be split across
+calls to this handler
 
 comment_callback will put the content of the comment in XML_COMMENT
 
-eg: expat -s 'delcare -p XML_NAME XML_ATTRIBUTES' -e "declare -p XML_NAME" -d "declare -p XML_DATA"  -c "declare -p XML_COMMENT" foo.xml
-work in progress.
+eg:
+
+expat -s 'declare -p XML_NAME XML_ATTRIBUTES' -e "declare -p XML_NAME" \
+      -d "declare -p XML_DATA"  -c "declare -p XML_COMMENT" file.xml
+
+

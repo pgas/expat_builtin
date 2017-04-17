@@ -70,13 +70,13 @@ expat_builtin (list)
      temporary environment like what is done for these in
      execute_builtin.  
      
-     I'm not 100% this is what I should do by hey.
+     I'm not 100% this is what I should do...
      
      I'm also wondering if the freeing the parser should also be
      unwind protected....it should probably be
   */
 
-  begin_unwind_frame ("hello_builtin_env");
+  begin_unwind_frame ("expat_builtin_env");
   if (temporary_env)
     {
       push_scope (VC_BLTNENV, temporary_env);
@@ -95,7 +95,7 @@ expat_builtin (list)
   freeParser(p);  
 
   if (temporary_env)
-    run_unwind_frame ("hello_builtin_env");
+    run_unwind_frame ("expat_builtin_env");
   return (EXECUTION_SUCCESS);
 }
 
@@ -122,7 +122,7 @@ expat_builtin_unload (s)
 char *expat_doc[] = {
 	"Parse xml files",
 	"",
-	"Evaluate the callback each time the parser reach a start element (start_callback)  and end element(end_callback) or parse text (data_callback)",
+	"Evaluate the callback each time the parser reach a start element (start_callback), an end element(end_callback) or parse text (data_callback)",
 	(char *)NULL
 };
 

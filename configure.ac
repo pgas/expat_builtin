@@ -17,6 +17,7 @@ AC_SUBST([finish_cmds], [""])
 #install the .so in $(libdir)/bash
 AC_SUBST([libdir], ["$libdir/bash"])
 
+AC_CONFIG_MACRO_DIRS([m4])
 AC_CONFIG_SRCDIR([src/expat.c])
 
 AC_PROG_CC
@@ -28,12 +29,21 @@ AC_ARG_WITH([bash],
               [The prefix where the bash headers are installed (default is /usr/include)])],
               [with_bash=$withval],
               [with_bash="/usr/include"])
-	      
-CPPFLAGS="$CPPFLAGS -I$with_bash/bash -I$with_bash/bash/include -I$with_bash/bash/builtins"	
+
+# try with the bash subdir created when installing headers (bash>=4.4)
+# or without if someone tries to link against the sources directly
+if test -e $with_bash/bash/builtins.h
+  then
+   CPPFLAGS="$CPPFLAGS -I$with_bash/bash -I$with_bash/bash/include -I$with_bash/bash/builtins"
+  else
+CPPFLAGS="$CPPFLAGS -I$with_bash -I$with_bash/include -I$with_bash/builtins"
+fi
+    
 AC_CHECK_HEADERS([builtins.h],[bashfound=yes], [])
 if test x"$bashfound" = x
  then
-	AC_MSG_ERROR([unable to find the bash headers please use --with-bash=/path/to/headers/])
+   AC_MSG_ERROR([unable to find the bash headers please use --with-bash=/path/to/headers/])
+
 fi		     
 
 AC_CHECK_HEADERS([expat.h],[],[])
