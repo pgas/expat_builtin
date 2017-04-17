@@ -38,7 +38,8 @@ result in a sequence of calls to this handler. In other words, if
 you're searching for a pattern in the text, it may be split across
 calls to this handler
 
-comment_callback will put the content of the comment in XML_COMMENT
+* comment_callback
+will put the content of the comment in XML_COMMENT
 
 eg:
 
