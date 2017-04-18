@@ -1,0 +1,3 @@
+conf* linguist-vendored
+depcomp linguist-vendored
+ltmain.sh linguist-vendored
