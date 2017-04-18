@@ -2,4 +2,6 @@ conf* linguist-vendored
 depcomp linguist-vendored
 ltmain.sh linguist-vendored
 Makef* linguist-vendored
-src/Makef*
+src/Makef* linguist-vendored
+libtool linguist-vendored
+install* linguist-vendored
