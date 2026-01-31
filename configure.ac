@@ -1,4 +1,4 @@
-AC_INIT(expat, 0.1)
+AC_INIT([expat],[0.1])
 
 # Many autoconf project creates a config.h.  however the bash headers
 # already use their own version of config.h that, since bash 4.4, is
@@ -25,8 +25,7 @@ AC_PROG_INSTALL
 
 # an option to tell configure where the bash headers are
 AC_ARG_WITH([bash],
-              [AC_HELP_STRING([--with-bash],
-              [The prefix where the bash headers are installed (default is /usr/include)])],
+              [AS_HELP_STRING([--with-bash],[The prefix where the bash headers are installed (default is /usr/include)])],
               [with_bash=$withval],
               [with_bash="/usr/include"])
 
